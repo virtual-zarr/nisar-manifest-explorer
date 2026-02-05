@@ -4,6 +4,9 @@ NISAR Byte Range Interleaving Analysis
 Creates a static visualization showing how chunks from different variables
 are interleaved in an HDF5 file, and why selecting a spatial region results
 in scattered I/O operations.
+
+Usage:
+    uv run python scripts/interleaving_analysis.py
 """
 
 import json
@@ -290,7 +293,9 @@ def create_interleaving_figure(chunks: list[dict], output_path: str | Path):
 
 
 def main():
-    manifest_file = Path(__file__).parent / "data" / "nisar_manifest.json"
+    # Project root is parent of scripts/
+    project_root = Path(__file__).parent.parent
+    manifest_file = project_root / "data" / "nisar_manifest.json"
 
     if not manifest_file.exists():
         print(f"Manifest not found: {manifest_file}")
@@ -300,7 +305,7 @@ def main():
     chunks = load_chunks(manifest_file)
     print(f"Loaded {len(chunks):,} chunks")
 
-    output_dir = Path(__file__).parent / "output"
+    output_dir = project_root / "output"
     output_dir.mkdir(exist_ok=True)
 
     output_path = output_dir / "interleaving_analysis.png"
