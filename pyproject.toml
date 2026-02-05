@@ -1,0 +1,24 @@
+[project]
+name = "nisar-manifest-explorer"
+version = "0.1.0"
+description = "Interactive visualization of NISAR chunk manifests"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+dependencies = [
+    "virtualizarr[hdf] @ git+https://github.com/maxrjones/VirtualiZarr@c-dtype",
+    "vzviz @ git+https://github.com/virtual-zarr/vzviz",
+    "obspec-utils @ git+https://github.com/virtual-zarr/obspec-utils",
+    "panel>=1.0",
+    "holoviews>=1.18",
+    "bokeh>=3.0",
+    "colorcet",
+    "ujson",
+]
+
+[dependency-groups]
+dev = [
+    "earthaccess",
+    "aiohttp",
+    "ujson",
+]

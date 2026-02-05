@@ -1,0 +1,2 @@
+# Manifest files go here
+# Run: uv run --group dev scripts/generate_manifest.py
