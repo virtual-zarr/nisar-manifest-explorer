@@ -259,7 +259,6 @@ def create_interleaving_figure(chunks: list[dict], output_path: str | Path):
         f"Within this {byte_span/1e6:.0f} MB span, there are {len(other_chunks):,} chunks from other variables interleaved.",
         "",
         "ROOT CAUSE: HDF5 writes chunks sequentially as data is generated, not grouped by variable.",
-        "This is why cloud-native formats like Zarr (one chunk = one file) provide better random access.",
     ]
     summary_text = "\n".join(summary_lines)
 
