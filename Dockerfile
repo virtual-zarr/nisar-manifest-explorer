@@ -1,27 +1,29 @@
 FROM python:3.12-slim
 
-WORKDIR /app
-
 # Install git (needed for git+ dependencies) and uv
 RUN apt-get update && apt-get install -y --no-install-recommends git \
     && rm -rf /var/lib/apt/lists/* \
     && pip install uv
 
-# Copy project files
-COPY pyproject.toml .
-COPY app.py .
-COPY data/ data/
-
-# Install dependencies (production only, no dev deps)
-RUN uv sync --no-dev
-
 # Create non-root user for HuggingFace
 RUN useradd -m -u 1000 user
+
+# Set up working directory with correct ownership
+WORKDIR /app
+RUN chown user:user /app
+
+# Switch to non-root user BEFORE installing dependencies
 USER user
 ENV HOME=/home/user \
-    PATH=/home/user/.local/bin:$PATH
+    PATH=/home/user/.local/bin:/app/.venv/bin:$PATH
 
-WORKDIR /app
+# Copy project files (as user)
+COPY --chown=user:user pyproject.toml .
+COPY --chown=user:user app.py .
+COPY --chown=user:user data/ data/
+
+# Install dependencies (as user, so .venv is owned by user)
+RUN uv sync --no-dev
 
 # Expose port for Panel
 EXPOSE 7860

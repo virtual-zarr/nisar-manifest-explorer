@@ -5,13 +5,17 @@ Interactive visualization of VirtualiZarr chunk manifests.
 Loads from a pre-generated Kerchunk JSON - no authentication required.
 """
 
+import warnings
 from pathlib import Path
 
 import holoviews as hv
+import numpy as np
 import panel as pn
 import ujson
 
+import vzviz
 from obspec_utils.registry import ObjectStoreRegistry
+from virtualizarr.codecs import zarr_codec_config_to_v3
 from virtualizarr.manifests import (
     ChunkManifest,
     ManifestArray,
@@ -20,12 +24,14 @@ from virtualizarr.manifests import (
 )
 from virtualizarr.manifests.manifest import ChunkEntry
 from virtualizarr.manifests.utils import create_v3_array_metadata
-from virtualizarr.codecs import zarr_codec_config_to_v3
 from zarr.core.metadata.v3 import ArrayV3Metadata
 
-import numpy as np
-
-import vzviz
+# Suppress zarr numcodecs warning (expected when using V2-style codecs)
+warnings.filterwarnings(
+    "ignore",
+    message="Numcodecs codecs are not in the Zarr version 3 specification",
+    category=UserWarning,
+)
 
 # Initialize extensions at module level - MUST happen before any components are created
 hv.extension("bokeh")
