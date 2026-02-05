@@ -12,10 +12,16 @@ import panel as pn
 import ujson
 
 from obspec_utils.registry import ObjectStoreRegistry
-from virtualizarr.manifests import ChunkManifest, ManifestArray, ManifestGroup, ManifestStore
+from virtualizarr.manifests import (
+    ChunkManifest,
+    ManifestArray,
+    ManifestGroup,
+    ManifestStore,
+)
 from virtualizarr.manifests.manifest import ChunkEntry
 from virtualizarr.manifests.utils import create_v3_array_metadata
 from virtualizarr.codecs import zarr_codec_config_to_v3
+from zarr.core.metadata.v3 import ArrayV3Metadata
 
 import numpy as np
 
@@ -60,7 +66,9 @@ def parse_zarray(zarray_str: str, zattrs: dict) -> "ArrayV3Metadata":
     compressor = zarray.get("compressor")
 
     codec_configs = [*filters, *(compressor if compressor is not None else [])]
-    numcodec_configs = [zarr_codec_config_to_v3(config) for config in codec_configs if config]
+    numcodec_configs = [
+        zarr_codec_config_to_v3(config) for config in codec_configs if config
+    ]
 
     dimension_names = zattrs.get("_ARRAY_DIMENSIONS")
 
@@ -122,7 +130,7 @@ def build_nested_group(arrays_dict: dict, root_attrs: dict) -> ManifestGroup:
             else:
                 if not group_path.startswith(prefix):
                     continue
-                remainder = group_path[len(prefix):]
+                remainder = group_path[len(prefix) :]
                 if "/" not in remainder:
                     child_name = remainder
                 else:
@@ -133,7 +141,9 @@ def build_nested_group(arrays_dict: dict, root_attrs: dict) -> ManifestGroup:
                 child_groups[child_name] = build_group(child_path)
 
         attrs = root_attrs if path == "" else {}
-        return ManifestGroup(arrays=arrays_at_level, groups=child_groups, attributes=attrs)
+        return ManifestGroup(
+            arrays=arrays_at_level, groups=child_groups, attributes=attrs
+        )
 
     return build_group("")
 
@@ -175,8 +185,10 @@ def load_manifest_from_json(json_path: str | Path) -> ManifestStore:
         chunk_entries = {}
         prefix = f"{var_name}/"
         for key, value in refs.items():
-            if key.startswith(prefix) and not key.endswith((".zarray", ".zattrs", ".zgroup")):
-                chunk_key = key[len(prefix):]
+            if key.startswith(prefix) and not key.endswith(
+                (".zarray", ".zattrs", ".zgroup")
+            ):
+                chunk_key = key[len(prefix) :]
                 # Skip empty chunk keys or invalid entries
                 if not chunk_key or chunk_key.startswith("."):
                     continue
@@ -192,7 +204,11 @@ def load_manifest_from_json(json_path: str | Path) -> ManifestStore:
 
     # Get root attributes
     root_attrs_str = refs.get(".zattrs", "{}")
-    root_attrs = ujson.loads(root_attrs_str) if isinstance(root_attrs_str, str) else root_attrs_str
+    root_attrs = (
+        ujson.loads(root_attrs_str)
+        if isinstance(root_attrs_str, str)
+        else root_attrs_str
+    )
 
     # Build nested group hierarchy
     group = build_nested_group(arrays, root_attrs)
@@ -216,8 +232,9 @@ def create_app():
     try:
         manifest_store = load_manifest_from_json(manifest_file)
         return vzviz.manifest_dashboard(manifest_store)
-    except Exception as e:
+    except Exception:
         import traceback
+
         return pn.Column(
             pn.pane.Markdown("# Error Loading Manifest"),
             pn.pane.Markdown(f"```\n{traceback.format_exc()}\n```"),

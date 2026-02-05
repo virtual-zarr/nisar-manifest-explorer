@@ -22,3 +22,6 @@ dev = [
     "aiohttp",
     "ujson",
 ]
+
+[tool.codespell]
+skip = "data/*"
