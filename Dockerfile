@@ -2,8 +2,10 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install uv for fast package installation
-RUN pip install uv
+# Install git (needed for git+ dependencies) and uv
+RUN apt-get update && apt-get install -y --no-install-recommends git \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install uv
 
 # Copy project files
 COPY pyproject.toml .
@@ -11,7 +13,7 @@ COPY app.py .
 COPY data/ data/
 
 # Install dependencies (production only, no dev deps)
-RUN uv sync --no-dev --frozen || uv sync --no-dev
+RUN uv sync --no-dev
 
 # Create non-root user for HuggingFace
 RUN useradd -m -u 1000 user
