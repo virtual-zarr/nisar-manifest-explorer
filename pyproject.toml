@@ -6,9 +6,10 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
 dependencies = [
-    "virtualizarr[hdf] @ git+https://github.com/maxrjones/VirtualiZarr@c-dtype",
+    "virtualizarr[hdf]",
     "vzviz @ git+https://github.com/virtual-zarr/vzviz",
-    "obspec-utils @ git+https://github.com/virtual-zarr/obspec-utils",
+    "obspec-utils @ git+https://github.com/developmentseed/obspec-utils",
+    "xarray @ git+https://github.com/maxrjones/xarray@complex_FillValue",
     "panel>=1.0",
     "holoviews>=1.18",
     "bokeh>=3.0",
