@@ -9,7 +9,7 @@ dependencies = [
     "virtualizarr[hdf]",
     "vzviz @ git+https://github.com/virtual-zarr/vzviz",
     "obspec-utils @ git+https://github.com/developmentseed/obspec-utils",
-    "xarray @ git+https://github.com/maxrjones/xarray@complex_FillValue",
+    "xarray",
     "panel>=1.0",
     "holoviews>=1.18",
     "bokeh>=3.0",
